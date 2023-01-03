@@ -1,0 +1,75 @@
+@startuml(id=SYSTEMBOOKINGTOSCHEDULESINTERNET-Container)
+title SYSTEM BOOKING TO SCHEDULES INTERNET - Containers
+
+skinparam {
+  shadowing false
+  arrowFontSize 10
+  defaultTextAlignment center
+  wrapWidth 200
+  maxMessageSize 100
+}
+hide stereotype
+top to bottom direction
+skinparam rectangle<<1>> {
+  BackgroundColor #08427b
+  FontColor #ffffff
+  BorderColor #052e56
+}
+skinparam rectangle<<12>> {
+  BackgroundColor #1168bd
+  FontColor #ffffff
+  BorderColor #0b4884
+}
+skinparam rectangle<<2>> {
+  BackgroundColor #08427b
+  FontColor #ffffff
+  BorderColor #052e56
+}
+skinparam rectangle<<3>> {
+  BackgroundColor #08427b
+  FontColor #ffffff
+  BorderColor #052e56
+}
+skinparam rectangle<<14>> {
+  BackgroundColor #1168bd
+  FontColor #ffffff
+  BorderColor #0b4884
+}
+skinparam rectangle<<4>> {
+  BackgroundColor #1168bd
+  FontColor #ffffff
+  BorderColor #0b4884
+}
+skinparam rectangle<<6>> {
+  BackgroundColor #1168bd
+  FontColor #ffffff
+  BorderColor #0b4884
+}
+skinparam rectangle<<9>> {
+  BackgroundColor #1168bd
+  FontColor #ffffff
+  BorderColor #0b4884
+}
+rectangle "==Admin\n<size:10>[Person]</size>\n\nA manager who manages the project's operations." <<1>> as 1
+rectangle "==Customer\n<size:10>[Person]</size>\n\nA person users website of booking schedule  medical examine ." <<2>> as 2
+rectangle "==Doctor\n<size:10>[Person]</size>\n\nA person with a medical degree whose job is to treat." <<3>> as 3
+rectangle "==E-mail System\n<size:10>[Software System]</size>\n\nThe internet Microsoft Exchange e-mail system." <<4>> as 4
+package "SYSTEM BOOKING TO SCHEDULES INTERNET\n[Software System]" {
+  rectangle "==API Application\n<size:10>[Container: NodeJS express]</size>\n\nProvides Booking to Schedule medical examine functionality via a JSON/HTTP API ." <<12>> as 12
+  rectangle "==Database\n<size:10>[Container: MySQL]</size>\n\nStore user registration information, hashed authentication credentials access logs,..." <<14>> as 14
+  rectangle "==Single-Page Application\n<size:10>[Container: ReactJS]</size>\n\nProvides all of Booking to Schedule medical examine functionality to customer via their web browser." <<9>> as 9
+  rectangle "==Web Application\n<size:10>[Container: NodeJS]</size>\n\nDelivers the static content and the Internet booking to schedules single page application." <<6>> as 6
+}
+12 .[#707070,thickness=2].> 14 : "CRUD [sync]"
+12 .[#707070,thickness=2].> 4 : "Sends e-mail using"
+1 .[#707070,thickness=2].> 6 : "Uses"
+2 .[#707070,thickness=2].> 9 : "Uses"
+2 .[#707070,thickness=2].> 6 : "Uses"
+3 .[#707070,thickness=2].> 9 : "Uses"
+3 .[#707070,thickness=2].> 6 : "Uses"
+4 .[#707070,thickness=2].> 1 : "Sends e-mail to"
+4 .[#707070,thickness=2].> 2 : "Sends e-mail to"
+4 .[#707070,thickness=2].> 3 : "Sends e-mail to"
+9 .[#707070,thickness=2].> 12 : "Uses [JSON/HTTPS]"
+6 .[#707070,thickness=2].> 9 : "Delivers"
+@enduml
