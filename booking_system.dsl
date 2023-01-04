@@ -25,7 +25,17 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
           deleteAccount = component "Delete Account" "The manager can delete account doctor"
           updateAccount = component "Update Account" "The manager can update account doctor"
         }
-        database = container "Database" "Stores user registration information, hashed authentication credentials, access logs, etc." "MySQL" "Database"
+        database = container "Database" "Stores user registration information, hashed authentication credentials, access logs, etc." "MySQL" "Database"{
+          user = component "User using booking care" "Allow save information all user in database"
+          booking = component "List of customer's booking schedule" "Allows to save all booking information of customers using the system"
+          clinic = component "List of clinics" "allows to save clinic information"
+          history = component "List of schedule histories" "Allow to save all history schedule information of customer and doctor"
+          schedule = component "List of schedule of all customer and doctor" "Allow to save all schedule of all customer and doctor"
+          specialty = component "List of specialty of doctor" "allows to save all information about the professional profession of the doctor"
+          allCode = component "List of code" "Allows to save all promotional codes for loyal customers"
+          doctorClinic = component "List of relationship" "The link between doctors and clinics"
+          markdown = component "List of markdown" "Save information about discount services"
+        }
       }
     }
 
@@ -46,7 +56,7 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
     customer -> singlePageApplication "Views account balances, and makes booking using"
     webApplication -> singlePageApplication "Delivers to the customer's web browser"
     webApplication -> database "Reads from and writes to" "JDBC"
-  
+
     #relationship component
     singlePageApplication -> resetPasswordController
     singlePageApplication -> securityComponent
@@ -71,6 +81,29 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
     updateAccount -> database "After update, information be saved to database"
     securityComponent -> database 
     deleteAccount -> database
+
+    singlePageApplication -> user
+    singlePageApplication -> booking
+    singlePageApplication -> clinic
+    singlePageApplication -> schedule
+    singlePageApplication -> specialty
+    singlePageApplication -> allCode
+
+    signinController -> user
+    resetPasswordController -> user
+    addInfoDoctor -> user
+    addAccount -> user
+    deleteAccount -> user
+    updateAccount -> user
+
+    user -> history
+    user -> schedule
+    user -> booking
+    user -> doctorClinic
+    clinic -> doctorClinic
+    user -> markdown
+    clinic -> markdown
+    specialty -> markdown
   }
 
   views {
@@ -105,6 +138,13 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
         securityComponent email
         addInfoDoctor addAccount
         deleteAccount updateAccount
+      }
+    }
+    component database "DatabaseComponent" {
+      include *
+      animation {
+        singlePageApplication signinController resetPasswordController addInfoDoctor addAccount deleteAccount updateAccount
+        user booking clinic history schedule specialty allCode doctorClinic markdown
       }
     }
     dynamic apiApplication "SignIn" "Summarises how the sign in feature works in the single-page application." {
