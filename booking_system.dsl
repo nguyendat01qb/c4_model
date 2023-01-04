@@ -17,8 +17,10 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
           signinController = component "Sign In Controller" "Allows users to sign in to the Booking Schedule System." "ReactJS Controller"
           securityComponent = component "Security Component" "Provides functionality related to signing in, changing passwords, etc." "ReactJS"
           resetPasswordController = component "Reset Password Controller" "Allows users to reset their passwords with a single use URL." "ReactJS Controller"
-          emailComponent = component "E-mail Component" "Sends e-mails to users." "ReactJS"
+          emailComponents = component "E-mail Component" "Sends e-mails to users." "ReactJS"
           addInfoDoctor = component "Add Doctor's Infomation" "The doctor can add doctor's information" "ReactJS Controller"
+          updateInfoDoctor = component "Update Doctor's Infomation" "The doctor can update doctor's information" "ReactJS Controller"
+
           addAccount = component "Add Account" "The manager can add account doctor"
           deleteAccount = component "Delete Account" "The manager can delete account doctor"
           updateAccount = component "Update Account" "The manager can update account doctor"
@@ -50,21 +52,24 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
     singlePageApplication -> securityComponent
 
     singlePageApplication -> addInfoDoctor
+    singlePageApplication -> updateInfoDoctor
     singlePageApplication -> addAccount
     singlePageApplication -> updateAccount
     singlePageApplication -> deleteAccount
-    singlePageApplication -> emailComponent
+    singlePageApplication -> emailComponents
     singlePageApplication -> signinController
 
     signinController -> securityComponent
     resetPasswordController -> securityComponent
-    resetPasswordController -> emailComponent
-    emailComponent -> email
-    addInfoDoctor -> database
-    addAccount -> database
+    resetPasswordController -> emailComponents
+    emailComponents -> email 
+    addInfoDoctor -> database "Add doctor's information to database"
+    database -> updateInfoDoctor "Get doctor's information to client manage"
+    updateInfoDoctor -> database "After update, information be saved to database"
+    addAccount -> database "Add account to database"
     database -> updateAccount "Doctor's information return to client"
-    updateAccount -> database "Afer update, information be saved to database"
-    securityComponent -> database
+    updateAccount -> database "After update, information be saved to database"
+    securityComponent -> database 
     deleteAccount -> database
   }
 
@@ -110,11 +115,29 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
       securityComponent -> database "select * from users where username = ?"
       database -> securityComponent "Returns user data to"
       securityComponent -> signinController "Returns true if the hashed password matches"
-      securityComponent -> emailComponent "send a request for information verification"
-      emailComponent -> resetPasswordController "Reset Password"
+      securityComponent -> emailComponents "send a request for information verification"
+      emailComponents -> resetPasswordController "Reset Password"
       signinController -> singlePageApplication "Sends back an authentication token to"
       autoLayout
     }
+    dynamic apiApplication "Management" "Management Information and account"{
+      singlePageApplication -> addInfoDoctor "Add information doctor"
+      singlePageApplication -> updateInfoDoctor "Update information doctor"
+      singlePageApplication -> addAccount "Add account"
+      singlePageApplication -> updateAccount "Update account"
+      singlePageApplication -> deleteAccount "Delete account"
+
+      addInfoDoctor -> database "Add information doctor"
+      database -> updateInfoDoctor "Get information from database to show"
+      updateInfoDoctor -> database "Request update doctor's information"
+
+      database -> addAccount "Get information from database to check"
+      addAccount -> database "Request new account"
+      database -> updateAccount "Get information from database to show"
+      updateAccount -> database "Request update account"
+      deleteAccount -> database "Request delete account"
+    }
+   
 
     styles {
       element "Person" {
