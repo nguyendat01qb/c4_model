@@ -61,6 +61,8 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
     singlePageApplication -> resetPasswordController
     singlePageApplication -> securityComponent
 
+    doctor -> singlePageApplication
+    admin -> singlePageApplication
     singlePageApplication -> addInfoDoctor
     singlePageApplication -> updateInfoDoctor
     singlePageApplication -> addAccount
@@ -82,6 +84,8 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
     securityComponent -> database 
     deleteAccount -> database
 
+
+//
     singlePageApplication -> user
     singlePageApplication -> booking
     singlePageApplication -> clinic
@@ -130,7 +134,7 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
         }
         autoLayout
     }
-    component apiApplication "Components" {
+    component apiApplication "DoctorAndAdmin" {
       include *
       animation {
         singlePageApplication email database
@@ -140,42 +144,57 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
         deleteAccount updateAccount
       }
     }
+    component apiApplication "Customer" {
+
+    }
     component database "DatabaseComponent" {
       include *
       animation {
         singlePageApplication signinController resetPasswordController addInfoDoctor addAccount deleteAccount updateAccount
         user booking clinic history schedule specialty allCode doctorClinic markdown
       }
+      autoLayout
     }
     dynamic apiApplication "SignIn" "Summarises how the sign in feature works in the single-page application." {
+      doctor -> singlePageApplication "Uses"
+      customer -> singlePageApplication "Uses"
       singlePageApplication -> signinController "Submits credentials to"
+      signinController -> singlePageApplication "Sends back an authentication token to"
       singlePageApplication -> resetPasswordController "Request new password"
       signinController -> securityComponent "Validates credentials using"
       resetPasswordController -> securityComponent "Validates infomation for request"
       securityComponent -> database "select * from users where username = ?"
       database -> securityComponent "Returns user data to"
       securityComponent -> signinController "Returns true if the hashed password matches"
-      securityComponent -> emailComponents "send a request for information verification"
+      // securityComponent -> emailComponents "send a request for information verification"
       emailComponents -> resetPasswordController "Reset Password"
       signinController -> singlePageApplication "Sends back an authentication token to"
       autoLayout
     }
-    dynamic apiApplication "Management" "Management Information and account"{
-      singlePageApplication -> addInfoDoctor "Add information doctor"
-      singlePageApplication -> updateInfoDoctor "Update information doctor"
+    dynamic apiApplication "ManagementAccount" "Management account"{
+      admin -> singlePageApplication "Uses"
       singlePageApplication -> addAccount "Add account"
       singlePageApplication -> updateAccount "Update account"
       singlePageApplication -> deleteAccount "Delete account"
-
-      addInfoDoctor -> database "Add information doctor"
-      database -> updateInfoDoctor "Get information from database to show"
-      updateInfoDoctor -> database "Request update doctor's information"
-
       database -> addAccount "Get information from database to check"
       addAccount -> database "Request new account"
       database -> updateAccount "Get information from database to show"
       updateAccount -> database "Request update account"
       deleteAccount -> database "Request delete account"
+     
+      autoLayout
+    }
+
+    dynamic apiApplication "DoctorsInformation" "Managerment doctor's information"{
+      doctor -> singlePageApplication "Uses"
+      singlePageApplication -> addInfoDoctor "Add information doctor"
+      singlePageApplication -> updateInfoDoctor "Update information doctor"
+
+      addInfoDoctor -> database "Add information doctor"
+      database -> updateInfoDoctor "Get information from database to show"
+      updateInfoDoctor -> database "Request update doctor's information"
+
+      autoLayout
     }
    
 
