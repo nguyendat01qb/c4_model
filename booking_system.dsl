@@ -1,14 +1,14 @@
 workspace "Booking Care"  "This is an example workspace to illustrate the key features of Structurizr, via the DSL, based around a fictional online banking system." {
   model {
     customer = person "Personnal Booking Care" "A customer of the booking care with personal booking accounts." "Customer"
+    admin = person "Admin Booking Care" "Admin within booking" "Booking staff"
+    doctor = person "Doctor Booking Care" "Doctor within booking" "Booking staff"
 
     enterprise "Booking Care" {
-      admin = person "Admin Service Booking Care" "Admin servvice within booking" "Booking staff"
-      doctor = person "Doctor Service Booking Care" "Doctor service within booking" "Booking staff"
 
       mainframe = softwareSystem "Main Booking system" "Main booking system" "Existing System"
       email = softwareSystem "Email System" "Manager system" "Existing System"
-      atm = softwaresystem "ATM" "Allows customers to withdraw cash." "Existing System"
+      paymentMethod = softwaresystem "Payment Method" "Allows customers to withdraw cash." "Existing System"
 
       bookingCareSystem = softwareSystem "Booking System" "Allow all customer to view information about their booking accounts, and booking" {
         singlePageApplication = container "Single-Page Application" "Provides all of the Booking care functionality to customers via their web browser." "Node JS and React JS" "Web Browser"
@@ -45,12 +45,12 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
     customer -> mainframe  "View booking schedules and book appointments"
     mainframe -> email "Send email confirm schedule"
     email -> customer "Send email to"
-    customer -> atm "Customer confirms appointment and pays advances"
+    customer -> paymentMethod "Customer confirms appointment and pays advances"
     email -> doctor "The schedule information of registered customers has been confirmed"
     admin -> mainframe "Uses"
     doctor -> mainframe "Uses"
     customer -> mainframe "Uses"
-    atm -> mainframe "Uses"
+    paymentMethod -> mainframe "Uses"
 
     customer -> webApplication "Visit web" "HTTPS"
     customer -> singlePageApplication "Views account balances, and makes booking using"
@@ -72,14 +72,14 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
     signinController -> securityComponent
     resetPasswordController -> securityComponent
     resetPasswordController -> emailComponents
-    emailComponents -> email 
+    emailComponents -> email
     addInfoDoctor -> database "Add doctor's information to database"
     database -> updateInfoDoctor "Get doctor's information to client manage"
     updateInfoDoctor -> database "After update, information be saved to database"
     addAccount -> database "Add account to database"
     database -> updateAccount "Doctor's information return to client"
     updateAccount -> database "After update, information be saved to database"
-    securityComponent -> database 
+    securityComponent -> database
     deleteAccount -> database
 
     singlePageApplication -> user
@@ -177,7 +177,7 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
       updateAccount -> database "Request update account"
       deleteAccount -> database "Request delete account"
     }
-   
+
 
     styles {
       element "Person" {
