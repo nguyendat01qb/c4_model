@@ -14,8 +14,12 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
         singlePageApplication = container "Single-Page Application" "Provides all of the Booking care functionality to customers via their web browser." "Node JS and React JS" "Web Browser"
         mobileApp = container "Mobile App" "Provides a limited subset of the Booking care functionality to customers via their mobile device." "React Native" "Mobile App"
         webApplication = container "Web Application" "Delivers the static content and the Booking care single page application." "Node JS Express MVC"
-        // apiApplication = container "API Application" "Provides Booking care functionality via a JSON/HTTPS API." "Node JS Express MVC"
-        database = container "Database" "Stores user registration information, hashed authentication credentials, access logs, etc." "Oracle Database Schema" "Database"
+        apiApplication = container "API Application" "Provides Booking care functionality via a JSON/HTTPS API." "Node JS Express MVC"{
+          signinController = component "Sign In Controller" "Allows users to sign in to the Booking Schedule System." "ReactJS Controller"
+          securityComponent = component "Security Component" "Provides functionality related to signing in, changing passwords, etc." "ReactJS"
+          resetPasswordController = component "Reset Password Controller" "Allows users to reset their passwords with a single use URL." "ReactJS Controller"
+        }
+        database = container "Database" "Stores user registration information, hashed authentication credentials, access logs, etc." "MySQL" "Database"
       }
     }
 
@@ -64,6 +68,19 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
             database
         }
         autoLayout
+    }
+    dynamic apiApplication "SignIn" "Summarises how the sign in feature works in the single-page application." {
+      singlePageApplication -> signinController "Submits credentials to"
+      singlePageApplication -> resetPasswordController "Request new password"
+      signinController -> securityComponent "Validates credentials using"
+      resetPasswordController -> securityComponent "Validates infomation for request"
+      securityComponent -> database "select * from users where username = ?"
+      database -> securityComponent "Returns user data to"
+      securityComponent -> signinController "Returns true if the hashed password matches"
+      securityComponent -> email "send a request for information verification"
+      email -> resetPasswordController "New Password"
+      signinController -> singlePageApplication "Sends back an authentication token to"
+      autoLayout
     }
 
     styles {
