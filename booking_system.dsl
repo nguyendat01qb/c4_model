@@ -1,8 +1,8 @@
 workspace "Booking Care"  "This is an example workspace to illustrate the key features of Structurizr, via the DSL, based around a fictional online banking system." {
   model {
-    customer = person "Personnal Booking Care" "A customer of the booking care with personal booking accounts." "Customer"
-    admin = person "Admin Booking Care" "Admin within booking" "Booking staff"
-    doctor = person "Doctor Booking Care" "Doctor within booking" "Booking staff"
+    customer = person "Personnal Booking Care" "A customer of the booking care with personal booking accounts." "User"
+    admin = person "Admin Booking Care" "Admin within booking" "User"
+    doctor = person "Doctor Booking Care" "Doctor within booking" "User"
 
     enterprise "Booking Care" {
 
@@ -185,7 +185,7 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
         fontSize 22
         shape Person
       }
-      element "Customer" {
+      element "User" {
         background #08427b
       }
       element "Booking staff" {
