@@ -12,12 +12,16 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
 
       bookingCareSystem = softwareSystem "Booking System" "Allow all customer to view information about their booking accounts, and booking" {
         singlePageApplication = container "Single-Page Application" "Provides all of the Booking care functionality to customers via their web browser." "Node JS and React JS" "Web Browser"
-        mobileApp = container "Mobile App" "Provides a limited subset of the Booking care functionality to customers via their mobile device." "React Native" "Mobile App"
         webApplication = container "Web Application" "Delivers the static content and the Booking care single page application." "Node JS Express MVC"
         apiApplication = container "API Application" "Provides Booking care functionality via a JSON/HTTPS API." "Node JS Express MVC"{
           signinController = component "Sign In Controller" "Allows users to sign in to the Booking Schedule System." "ReactJS Controller"
           securityComponent = component "Security Component" "Provides functionality related to signing in, changing passwords, etc." "ReactJS"
           resetPasswordController = component "Reset Password Controller" "Allows users to reset their passwords with a single use URL." "ReactJS Controller"
+          emailComponent = component "E-mail Component" "Sends e-mails to users." "ReactJS"
+          addInfoDoctor = component "Add Doctor's Infomation" "The doctor can add doctor's information" "ReactJS Controller"
+          addAccount = component "Add Account" "The manager can add account doctor"
+          deleteAccount = component "Delete Account" "The manager can delete account doctor"
+          updateAccount = component "Update Account" "The manager can update account doctor"
         }
         database = container "Database" "Stores user registration information, hashed authentication credentials, access logs, etc." "MySQL" "Database"
       }
@@ -38,10 +42,30 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
 
     customer -> webApplication "Visit web" "HTTPS"
     customer -> singlePageApplication "Views account balances, and makes booking using"
-    customer -> mobileApp "Views account balances, and makes booking using"
     webApplication -> singlePageApplication "Delivers to the customer's web browser"
     webApplication -> database "Reads from and writes to" "JDBC"
-    mobileApp -> database "Reads from and writes to" "JDBC"
+  
+    #relationship component
+    singlePageApplication -> resetPasswordController
+    singlePageApplication -> securityComponent
+
+    singlePageApplication -> addInfoDoctor
+    singlePageApplication -> addAccount
+    singlePageApplication -> updateAccount
+    singlePageApplication -> deleteAccount
+    singlePageApplication -> emailComponent
+    singlePageApplication -> signinController
+
+    signinController -> securityComponent
+    resetPasswordController -> securityComponent
+    resetPasswordController -> emailComponent
+    emailComponent -> email
+    addInfoDoctor -> database
+    addAccount -> database
+    database -> updateAccount "Doctor's information return to client"
+    updateAccount -> database "Afer update, information be saved to database"
+    securityComponent -> database
+    deleteAccount -> database
   }
 
   views {
@@ -64,10 +88,19 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
             customer mainframe email
             webApplication
             singlePageApplication
-            mobileApp
             database
         }
         autoLayout
+    }
+    component apiApplication "Components" {
+      include *
+      animation {
+        singlePageApplication email database
+        signinController resetPasswordController
+        securityComponent email
+        addInfoDoctor addAccount
+        deleteAccount updateAccount
+      }
     }
     dynamic apiApplication "SignIn" "Summarises how the sign in feature works in the single-page application." {
       singlePageApplication -> signinController "Submits credentials to"
@@ -77,8 +110,8 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
       securityComponent -> database "select * from users where username = ?"
       database -> securityComponent "Returns user data to"
       securityComponent -> signinController "Returns true if the hashed password matches"
-      securityComponent -> email "send a request for information verification"
-      email -> resetPasswordController "New Password"
+      securityComponent -> emailComponent "send a request for information verification"
+      emailComponent -> resetPasswordController "Reset Password"
       signinController -> singlePageApplication "Sends back an authentication token to"
       autoLayout
     }
