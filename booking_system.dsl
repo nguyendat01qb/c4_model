@@ -11,7 +11,24 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
       paymentMethod = softwaresystem "Payment Method" "Allows customers to withdraw cash." "Existing System"
 
       bookingCareSystem = softwareSystem "Booking System" "Allow all customer to view information about their booking accounts, and booking" {
-        singlePageApplication = container "Single-Page Application" "Provides all of the Booking care functionality to customers via their web browser." "Node JS and React JS" "Web Browser"
+        singlePageApplication = container "Single-Page Application" "Provides all of the Booking care functionality to customers via their web browser." "Node JS and React JS" "Web Browser" {
+          articleComponent = component "Article Component" "Viewing health related news, promotions..."
+          bookingCareSearchComponent = component "Booking Care Search Component" "Allows users search with mutiple type (Clinic, Doctor, Specialty) at a time"
+          doctorSearchComponent = component "Doctor Search Component" "Allows user search doctor who fits the requirement of user"  
+          clinicSearchComponent = component "Clinic Search Component" "Allows user search clinic that fits the requirement of user" 
+          specialtySearchComponent = component "Specialty Search Component" "Allows user search specialty that fits the requirement of user"
+          outStandingDoctorComponent = component "Doctor Outstanding Component" "Showing top 10 outstanding doctor in last month"
+          outStandingClinicComponent = component "Clinic Outstanding Component" "Showing top 10 outstanding clinic in last month"
+          outStandingSpecialtyComponent = component "Specialty Outstanding Component" "Showing top 10 outstanding specialty in last month"
+          bookingDoctorComponent = component "Booking Doctor Component" "Allows user booking an appointment with doctor by available time period"
+          bookingClinicComponent = component "Booking Clinic Component" "Allows user booking an appointment by examination price in the available time period"
+          doctorViewComponent = component "Doctor View Component" "Showing doctor's information, examination price, doctor's clinic"
+          clinicViewComponent = component "Clinic View Component" "Showing clinic's information, list examination price"
+          homepageComponent = component "Home Page Component" "Showing booking care search, categories, outstanding components"
+          specialtyPageComponent = component "Specialty Page Component" "Showing list of specialty"
+          clinicPageComponent = component "Clinic Page Component" "Showing list of clinic"
+          doctorPageComponent = component "Doctor Page Component" "Showing list of doctor"
+        }
         webApplication = container "Web Application" "Delivers the static content and the Booking care single page application." "Node JS Express MVC"
         apiApplication = container "API Application" "Provides Booking care functionality via a JSON/HTTPS API." "Node JS Express MVC"{
           signinController = component "Sign In Controller" "Allows users to sign in to the Booking Schedule System." "ReactJS Controller"
@@ -70,6 +87,17 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
     singlePageApplication -> deleteAccount
     singlePageApplication -> emailComponents
     singlePageApplication -> signinController
+
+    homepageComponent -> outStandingDoctorComponent "Uses"
+    homepageComponent -> outStandingClinicComponent "Uses"
+    homepageComponent -> outStandingSpecialtyComponent "Uses"
+    homepageComponent -> bookingCareSearchComponent "Uses"
+    homepageComponent -> articleComponent "Uses"
+    doctorPageComponent -> doctorSearchComponent "Uses"
+    clinicPageComponent -> clinicSearchComponent "Uses"
+    specialtyPageComponent -> specialtySearchComponent "Uses"
+    doctorViewComponent -> bookingDoctorComponent "Uses"
+    clinicViewComponent -> bookingClinicComponent "Uses"
 
     signinController -> securityComponent
     resetPasswordController -> securityComponent
@@ -142,6 +170,15 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
         securityComponent email
         addInfoDoctor addAccount
         deleteAccount updateAccount
+      }
+    }
+    component singlePageApplication "Single-Page_Application_Components" {
+      include *
+      animation {
+        articleComponent bookingCareSearchComponent doctorSearchComponent clinicSearchComponent
+        specialtySearchComponent outStandingDoctorComponent outStandingClinicComponent outStandingSpecialtyComponent
+        bookingDoctorComponent bookingClinicComponent doctorViewComponent clinicViewComponent homepageComponent
+        specialtyPageComponent clinicPageComponent doctorPageComponent
       }
     }
     component apiApplication "Customer" {
