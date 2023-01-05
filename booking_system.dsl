@@ -99,6 +99,22 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
     doctorViewComponent -> bookingDoctorComponent "Uses"
     clinicViewComponent -> bookingClinicComponent "Uses"
 
+    bookingCareSearchComponent -> apiApplication "Request search top 5 doctors, clinics, specialty those match the query"
+    doctorSearchComponent -> apiApplication "Request search doctors those match the query"
+    clinicSearchComponent -> apiApplication "Request search clinics those match the query"
+    specialtySearchComponent -> apiApplication "Request search specialty those match the query"
+    doctorViewComponent -> apiApplication "Get doctor's information"
+    clinicViewComponent -> apiApplication "Get clinic's information"
+    doctorPageComponent -> apiApplication "Get list of doctor order by outstanding point"
+    clinicPageComponent -> apiApplication "Get list of clinic order by outstanding point"
+    specialtyPageComponent -> apiApplication "Get list of specialty"
+    outStandingDoctorComponent -> apiApplication "Get top 10 doctor order by outstanding point"
+    outStandingClinicComponent -> apiApplication "Get top 10 clinic order by outstanding point"
+    outStandingSpecialtyComponent -> apiApplication "Get top 10 specialty order by outstanding point"
+    articleComponent -> apiApplication "Get article's information"
+    bookingDoctorComponent -> apiApplication "Request booking an appointment with doctor"
+    bookingClinicComponent -> apiApplication "Request booking an appointment in clinic"
+
     signinController -> securityComponent
     resetPasswordController -> securityComponent
     resetPasswordController -> emailComponents
