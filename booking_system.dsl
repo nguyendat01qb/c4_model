@@ -1,12 +1,11 @@
 workspace "Booking Care"  "This is an example workspace to illustrate the key features of Structurizr, via the DSL, based around a fictional online banking system." {
   model {
-    customer = person "Personnal Booking Care" "A customer of the booking care with personal booking accounts." "Customer"
-    admin = person "Admin Booking Care" "Admin within booking" "Booking staff"
-    doctor = person "Doctor Booking Care" "Doctor within booking" "Booking staff"
+    customer = person "Personnal Booking Care" "A customer of the booking care with personal booking accounts." "User"
+    admin = person "Admin Booking Care" "Admin within booking" "User"
+    doctor = person "Doctor Booking Care" "Doctor within booking" "User"
 
     enterprise "Booking Care" {
 
-      mainframe = softwareSystem "Main Booking system" "Main booking system" "Existing System"
       email = softwareSystem "Email System" "Manager system" "Existing System"
       paymentMethod = softwaresystem "Payment Method" "Allows customers to withdraw cash." "Existing System"
 
@@ -40,17 +39,10 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
     }
 
     customer -> bookingCareSystem "View information, booking schedules and book appointments"
-    bookingCareSystem -> mainframe "Gets account information from, and makes bookings using"
     bookingCareSystem -> email "Send email using"
-    customer -> mainframe  "View booking schedules and book appointments"
-    mainframe -> email "Send email confirm schedule"
     email -> customer "Send email to"
     customer -> paymentMethod "Customer confirms appointment and pays advances"
     email -> doctor "The schedule information of registered customers has been confirmed"
-    admin -> mainframe "Uses"
-    doctor -> mainframe "Uses"
-    customer -> mainframe "Uses"
-    paymentMethod -> mainframe "Uses"
 
     customer -> webApplication "Visit web" "HTTPS"
     customer -> singlePageApplication "Views account balances, and makes booking using"
@@ -127,7 +119,7 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
     container bookingCareSystem "Containers" {
         include *
         animation {
-            customer mainframe email
+            customer
             webApplication
             singlePageApplication
             database
@@ -204,7 +196,7 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
         fontSize 22
         shape Person
       }
-      element "Customer" {
+      element "User" {
         background #08427b
       }
       element "Booking staff" {
