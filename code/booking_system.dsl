@@ -28,7 +28,18 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
           clinicPageComponent = component "Clinic Page Component" "Showing list of clinic"
           doctorPageComponent = component "Doctor Page Component" "Showing list of doctor"
         }
-        webApplication = container "Web Application" "Delivers the static content and the Booking care single page application." "Node JS Express MVC"
+        webApplication = container "Web Application" "Delivers the static content and the Booking care single page application." "Node JS Express MVC"{
+          introductionController = component "Introduction Controller" "Allows customer to view referra infomation"
+            signIn = component "SignIn Control" "SignIn when had account"
+            signUp = component "SignUp Control" "Customer signup when not has account"
+            resetPassword = component "Reset Password" "Customer can reset their password "
+            
+            security = component "Security Control" " account security and allow up to 3 incorrect entries"
+            infomationDoctor = component "Information Doctor" "Customer can view information doctor"
+            BookingSchedules = component "Booking Schedules"  "View schedules and booking schedules"
+            RatingComment = component "Rate and Comment" "Customer can rate and comment "
+            CentralControl = component "Central Controller" "  Connected to services"
+        }
         apiApplication = container "API Application" "Provides Booking care functionality via a JSON/HTTPS API." "Node JS Express MVC"{
           signinController = component "Sign In Controller" "Allows users to sign in to the Booking Schedule System." "ReactJS Controller"
           securityComponent = component "Security Component" "Provides functionality related to signing in, changing passwords, etc." "ReactJS"
@@ -74,6 +85,21 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
     customer -> webApplication "Visit web" "HTTPS"
     customer -> singlePageApplication "Views account balances, and makes booking using"
     webApplication -> singlePageApplication "Delivers to the customer's web browser"
+
+    customer -> introductionController "visits web"
+        introductionController -> signIn "signIn"
+        introductionController -> signUp "signUp"
+        introductionController -> infomationDoctor 
+        BookingSchedules -> RatingComment
+        signIn -> security "Uses"
+        signUp -> security "Uses"
+        signIn -> resetPassword
+        signIn -> BookingSchedules
+        resetPassword -> security "Uses"
+        RatingComment -> CentralControl 
+        infomationDoctor -> CentralControl 
+        security -> CentralControl 
+        CentralControl -> singlePageApplication
 
     #relationship component
     singlePageApplication -> resetPasswordController
@@ -186,6 +212,11 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
         }
         autoLayout
     }
+    component webApplication {
+            include *
+            autoLayout 
+
+        }
     component singlePageApplication "Single-Page_Application_Components" {
       include *
       animation {
