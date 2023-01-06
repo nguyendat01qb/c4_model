@@ -36,6 +36,16 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
           emailComponents = component "E-mail Component" "Sends e-mails to users." "ReactJS"
           addInfoDoctor = component "Add Doctor's Infomation" "The doctor can add doctor's information" "ReactJS Controller"
           updateInfoDoctor = component "Update Doctor's Infomation" "The doctor can update doctor's information" "ReactJS Controller"
+          
+          //customer
+          bookingController = component "Booking Controller" "Pre-registration of medical examination order number. Choose medical examination by appointment service. Reduce waiting time at the hospital" "ReactJS"
+          reviewCOntroller = component "Review service""Allows customer review about a doctor, an appointment in the system" "ReactJS"
+          viewAllSpecialties = component "View All Specialies""Customer can be view all specialties" "ReactJS"
+          viewAllFacilities = component "View All Facilities""Customer can be view all facilities" "ReactJS"
+
+          //tai
+          appointmentController = component "Appointment Controller" "Handles requests related to booking and canceling appointments."
+          paymentController = component "Payment Controller" "Handles requests related to processing payments for appointments."
 
           addAccount = component "Add Account" "The manager can add account doctor"
           deleteAccount = component "Delete Account" "The manager can delete account doctor"
@@ -64,7 +74,6 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
     customer -> webApplication "Visit web" "HTTPS"
     customer -> singlePageApplication "Views account balances, and makes booking using"
     webApplication -> singlePageApplication "Delivers to the customer's web browser"
-    webApplication -> database "Reads from and writes to" "JDBC"
 
     #relationship component
     singlePageApplication -> resetPasswordController
@@ -79,6 +88,13 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
     singlePageApplication -> deleteAccount
     singlePageApplication -> emailComponents
     singlePageApplication -> signinController
+    bookingController -> emailComponents
+    database -> bookingController
+
+    singlePageApplication -> bookingController "Uses"
+    singlePageApplication -> reviewCOntroller "Uses"
+    singlePageApplication -> viewAllFacilities "Uses"
+    singlePageApplication -> viewAllSpecialties "Uses"
 
     homepageComponent -> outStandingDoctorComponent "Uses"
     homepageComponent -> outStandingClinicComponent "Uses"
@@ -170,16 +186,6 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
         }
         autoLayout
     }
-    component apiApplication "DoctorAndAdmin" {
-      include *
-      animation {
-        singlePageApplication email database
-        signinController resetPasswordController
-        securityComponent email
-        addInfoDoctor addAccount
-        deleteAccount updateAccount
-      }
-    }
     component singlePageApplication "Single-Page_Application_Components" {
       include *
       animation {
@@ -188,10 +194,23 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
         bookingDoctorComponent bookingClinicComponent doctorViewComponent clinicViewComponent homepageComponent
         specialtyPageComponent clinicPageComponent doctorPageComponent
       }
+      autoLayout
     }
-    component apiApplication "Customer" {
 
+    component apiApplication "apiApplication" {
+      include *
+      animation {
+        singlePageApplication email database
+        signinController resetPasswordController
+        securityComponent email
+        addInfoDoctor addAccount
+        deleteAccount updateAccount
+        bookingController reviewCOntroller viewAllFacilities viewAllSpecialties
+      }
+      autoLayout
     }
+    
+
     component database "DatabaseComponent" {
       include *
       animation {
@@ -216,6 +235,19 @@ workspace "Booking Care"  "This is an example workspace to illustrate the key fe
       signinController -> singlePageApplication "Sends back an authentication token to"
       autoLayout
     }
+     dynamic apiApplication "Booking" "Pre-registration of medical examination order number. Choose medical examination by appointment service. Reduce waiting time at the hospital" {
+      customer -> singlePageApplication "Booking schedule care"
+      singlePageApplication -> bookingController "Submits credentials to"
+      bookingController -> emailComponents "Validates credentials using"
+      emailComponents -> email "Validates credentials using"
+      email -> customer "Validates credentials using"
+      database -> bookingController "Check for duplicate information. Select * from bookings where time Type = ? date = ?"
+      bookingController -> database "Add booking to database"
+      email -> doctor "Doctor check information"
+
+      autoLayout
+     }
+
     dynamic apiApplication "ManagementAccount" "Management account"{
       admin -> singlePageApplication "Uses"
       singlePageApplication -> addAccount "Add account"
